@@ -4,62 +4,27 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
         {
-            "name": "Debug Local File",
+            "name": "新建脚本",
             "type": "Ruby",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "program": "${workspaceRoot}/ruby.rb"
-        },
-        {
-            "name": "Listen for rdebug-ide",
-            "type": "Ruby",
-            "request": "attach",
-            "cwd": "${workspaceRoot}",
-            "remoteHost": "127.0.0.1",
-            "remotePort": "1234",
-            "remoteWorkspaceRoot": "${workspaceRoot}"
-        },
-        {
-            "name": "Rails server",
-            "type": "Ruby",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "program": "${workspaceRoot}/bin/rails",
+            "program": "${workspaceRoot}/new_project.rb",
             "args": [
-                "server"
+                "/Users/tl/Desktop/ModuleTEST",
+                "Login",
+                "HET"
             ]
         },
         {
-            "name": "RSpec - all",
+            "name": "分析脚本",
             "type": "Ruby",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "program": "${workspaceRoot}/bin/rspec",
+            "program": "${workspaceRoot}/analysis_module.rb",
             "args": [
-                "-I",
-                "${workspaceRoot}"
+                "/Users/tl/Desktop/ModuleTEST"
             ]
-        },
-        {
-            "name": "RSpec - active spec file only",
-            "type": "Ruby",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "program": "${workspaceRoot}/bin/rspec",
-            "args": [
-                "-I",
-                "${workspaceRoot}",
-                "${file}"
-            ]
-        },
-        {
-            "name": "Cucumber",
-            "type": "Ruby",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "program": "${workspaceRoot}/bin/cucumber"
         }
     ]
 }

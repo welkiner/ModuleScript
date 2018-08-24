@@ -3,7 +3,7 @@
 require 'xcodeproj'
 require 'fileutils'
 require 'cocoapods'
-
+require 'xcodeproj'
 
 $projPath =  ARGV[0]
 $moduleName = ARGV[1]
@@ -49,10 +49,18 @@ target.build_configurations.each do |config|
     config.build_settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = "iPhone Developer"
     config.build_settings['CODE_SIGN_STYLE[sdk=iphoneos*]'] = "Manual"
     config.build_settings['DEVELOPMENT_TEAM[sdk=iphoneos*]'] = "WU2WFZ2B66"
-    config.build_settings['PROVISIONING_PROFILE'] = "5974953f-9180-4a3e-bf3e-744ffc5bed16"
     config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "developAll"
 end
+moduleTarget = proj.new_target(:framework,"ModuleFramework",:ios)
+moduleTarget.build_configuration_list.set_setting('INFOPLIST_FILE', "$(SRCROOT)/#{$moduleName}/ModuleFrameworkInfo.plist")
+moduleTarget.build_configurations.each do |config|
+    config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.het.ModuleFramework"
+end
+
+
 proj.save
+
+
 File.open("Podfile","r:utf-8") do |lines|
     buffer = lines.read.gsub("__ProjectName__",$moduleName)
     File.open("Podfile","w"){|l|
@@ -68,5 +76,9 @@ File.open("#{$moduleName}.podspec","r:utf-8") do |lines|
     }
 end
 
-Pod::Command.run(['install'])
+# Pod::Command.run(['install'])
+
+
+
+`open .`
 puts "success"
