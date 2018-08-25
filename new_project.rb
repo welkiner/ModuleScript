@@ -53,15 +53,25 @@ target.build_configurations.each do |config|
     config.build_settings['CODE_SIGN_STYLE[sdk=iphoneos*]'] = "Manual"
     config.build_settings['DEVELOPMENT_TEAM[sdk=iphoneos*]'] = "WU2WFZ2B66"
     config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "developAll"
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
 end
 moduleTarget = proj.new_target(:framework,"ModuleFramework",:ios)
 moduleTarget.build_configuration_list.set_setting('INFOPLIST_FILE', "$(SRCROOT)/#{$moduleName}/ModuleFrameworkInfo.plist")
 moduleTarget.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.het.ModuleFramework"
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
 end
 
 
+target.add_dependency(moduleTarget)
+embedPhase = target.new_copy_files_build_phase("Embed Frameworks")
+embedPhase.symbol_dst_subfolder_spec = :frameworks
+# puts embedPhase.add_file_reference(moduleTarget.product_reference)
 proj.save
+f = proj.files
+proj.files.each{| reference|
+    puts reference.path
+}
 
 
 File.open("Podfile","r:utf-8") do |lines|
