@@ -26,8 +26,10 @@ FileUtils.cp "#{__dir__}/templates/pod.podspec", "./#{$moduleName}.podspec"
 Xcodeproj::Project.new("#{$moduleName}.xcodeproj").save
 proj = Xcodeproj::Project.open("#{$moduleName}.xcodeproj")
 proj.main_group.new_group("ModuleCode","./ModuleCode")
+proj.root_object.attributes["CLASSPREFIX"] = "#{$classPrefix}"
 group = proj.main_group.new_group($moduleName,"./#{$moduleName}")
 
+proj.main_group.children.reverse!
 
 group.new_reference("AppDelegate.h")
 ref1 = group.new_reference("AppDelegate.m")
@@ -41,6 +43,7 @@ ref10 = supportingGroup.new_reference("main.m")
 supportingGroup.new_reference("Info.plist")
 
 target = proj.new_target(:application,$moduleName,:ios)
+
 target.build_configuration_list.set_setting('INFOPLIST_FILE', "$(SRCROOT)/#{$moduleName}/Info.plist")
 target.add_resources([sourceRef1,sourceRef2,sourceRef3])
 target.add_file_references([ref1,ref2,ref10])
