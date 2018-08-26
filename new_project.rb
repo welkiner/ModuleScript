@@ -3,7 +3,6 @@
 require 'xcodeproj'
 require 'fileutils'
 require 'cocoapods'
-require 'xcodeproj'
 
 $projPath =  ARGV[0]
 $moduleName = ARGV[1]
@@ -62,16 +61,16 @@ moduleTarget.build_configurations.each do |config|
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
 end
 
-
 target.add_dependency(moduleTarget)
-embedPhase = target.new_copy_files_build_phase("Embed Frameworks")
-embedPhase.symbol_dst_subfolder_spec = :frameworks
-# puts embedPhase.add_file_reference(moduleTarget.product_reference)
-proj.save
-f = proj.files
 proj.files.each{| reference|
-    puts reference.path
+    if reference.path == "ModuleFramework.framework"
+        embedPhase = target.new_copy_files_build_phase("Embed Frameworks")
+        embedPhase.symbol_dst_subfolder_spec = :frameworks
+        embedPhase.add_file_reference(reference)
+        target.frameworks_build_phases.add_file_reference(reference)
+    end
 }
+proj.save
 
 
 File.open("Podfile","r:utf-8") do |lines|
