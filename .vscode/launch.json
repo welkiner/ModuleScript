@@ -11,8 +11,8 @@
             "cwd": "${workspaceRoot}",
             "program": "${workspaceRoot}/new_project.rb",
             "args": [
-                "/Users/ltl/Desktop/TEST",
-                "Login",
+                "/Users/tl/Desktop/ModuleTEST",
+                "HETPublicSDK_Login",
                 "HET"
             ]
         },
