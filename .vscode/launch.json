@@ -23,7 +23,7 @@
             "cwd": "${workspaceRoot}",
             "program": "${workspaceRoot}/analysis_module.rb",
             "args": [
-                "/Users/tl/Desktop/ModuleTEST"
+                "/Users/tl/Desktop/ModuleTEST/HETPublicSDK_LoginTEST"
             ]
         }
     ]

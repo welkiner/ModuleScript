@@ -3,8 +3,8 @@
 require 'fileutils'
 require 'date'
 require 'json'
+require 'cocoapods-core'
 $projPath =  ARGV[0]
-
 $CodeFolder = "ModuleCode"
 if (!File::directory?($projPath) ||
     !File::exist?("#{$projPath}/#{$CodeFolder}")||
@@ -40,6 +40,8 @@ $specName
 $svnLog
 $moduleVersion
 $svnURL
+$internalDependency=Hash.new
+$externalDependency=Hash.new
 Dir::chdir("#{$projPath}")
 
 svnInfoArray.each { |line|
@@ -81,6 +83,13 @@ IO.foreach("#{$specName}.podspec"){ |line|
         break
     end
 }
+
+
+podfile = Pod::Podfile.from_file("#{$projPath}/Podfile")
+podfile.target_definitions["ModuleFramework"].dependencies.each{ |dependencie|
+    $internalDependency[dependencie.name] = dependencie.requirement.requirements[0][1]
+}
+
  
 
 
@@ -91,7 +100,10 @@ fileHash = Hash[
     "specName" => $specName,
     "svnLog" => $svnLog,
     "moduleVersion" => $moduleVersion,
-    "svnURL" => $svnURL]
+    "svnURL" => $svnURL,
+    "internalDependency" => $internalDependency,
+    "externalDependency" => $externalDependency
+]
 file = File.new("moduleInfo.tmp","w")
 file.syswrite("#{fileHash.to_json}")
 file.close
