@@ -12,7 +12,7 @@
             "program": "${workspaceRoot}/new_project.rb",
             "args": [
                 "/Users/tl/Desktop/ModuleTEST",
-                "HETPublicSDK_Login",
+                "HETPublicSDK_LoginTEST",
                 "HET"
             ]
         },

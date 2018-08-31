@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
   s.source       = { :svn => "" }
 
-  s.source_files  = "ModuleCode/**/*.{h,m}"
-  s.resources = "ModuleCode/**/*.{xcassets,strings,xml,storyboard,xib,xcdatamodeld}"
-  s.vendored_libraries = "ModuleCode/**/*.{a}"
+  s.source_files  = "./**/*.{h,m}"
+  s.resources = "./**/*.{xcassets,strings,xml,storyboard,xib,xcdatamodeld}"
+  s.vendored_libraries = "./**/*.{a}"
 
 end
