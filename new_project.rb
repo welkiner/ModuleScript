@@ -3,7 +3,7 @@
 require 'xcodeproj'
 require 'fileutils'
 require 'cocoapods'
-require 'rmagick'
+require 'mini_magick'
 $projPath =  ARGV[0]
 $moduleName = ARGV[1]
 $classPrefix = ARGV[2]
@@ -55,6 +55,7 @@ target.build_configurations.each do |config|
     config.build_settings['DEVELOPMENT_TEAM[sdk=iphoneos*]'] = "WU2WFZ2B66"
     config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "developAll"
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
+    config.build_settings['TARGETED_DEVICE_FAMILY'] = "1"
 end
 moduleTarget = proj.new_target(:framework,"ModuleFramework",:ios)
 moduleTarget.add_file_references([moduleHeaderRef])
@@ -62,6 +63,7 @@ moduleTarget.build_configuration_list.set_setting('INFOPLIST_FILE', "#{$moduleNa
 moduleTarget.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.het.ModuleFramework"
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
+    config.build_settings['TARGETED_DEVICE_FAMILY'] = "1"
 end
 
 target.add_dependency(moduleTarget)
@@ -91,45 +93,20 @@ File.open("#{$moduleName}.podspec","r:utf-8") do |lines|
     }
 end
 
+def drawIcon(imgName, size)
+    img = MiniMagick::Image.new(imgName)  
+    img.combine_options do |c|
+        c.fill 'black'
+        c.gravity 'center' 
+        c.pointsize size
+        c.draw "text 0,0 '#{$moduleName.scan(/.{1,8}/).join("\n")}'"
+    end
+end
+
+Dir::chdir("#{$moduleName}/Assets.xcassets/AppIcon.appiconset")
+drawIcon "icon3.png",33
+drawIcon "icon2.png",22
+
+Dir::chdir("#{$projPath}/#{$moduleName}")
 Pod::Command.run(['install'])
-
-
-
-# Dir::chdir("#{$moduleName}/Assets.xcassets/AppIcon.appiconset")
-# img = Magick::Image.read('icon3.png').first
-# copyright=Magick::Draw.new 
-
-# def word_wrap(text)
-#     array = []
-#     index = 0,
-#     while text[10*index, 10].length > 0 do
-#         index += 1
-#         array[index] = text[10*index, 10];
-        
-#     end
-#     if text.length - 10*index > 0 then array[index+1] =text[10*index, text.length - 10*index]  end
-#     array
-# end
-# position = 0
-# puts word_wrap("#{$moduleName}")
-# word_wrap("#{$moduleName}").each do |row|
-#     copyright.annotate(img, 0, 0, 0, position += 20, row)
-# end
-
-# copyright.annotate(img,0,0,0,0,"#{$moduleName}") do 
-#     self.pointsize=30
-#     self.font_weight=Magick::BoldWeight
-#     self.fill='black'
-#     self.gravity=Magick::CenterGravity
-#     self.text_align(Magick::RightAlign)
-#     self.stroke = "none"
-#     text_metrics = copyright.get_type_metrics("#{$moduleName}")
-#     self.text(img.columns, text_metrics.height, "#{$moduleName}")
-#     self.draw(img)
-# end
-# Query font metrics for positioning (or get_multiline_type_metrics)
-
-
-# img.write('img.png')
-`open .`
 puts "success"
