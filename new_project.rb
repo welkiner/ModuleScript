@@ -64,6 +64,7 @@ moduleTarget.build_configurations.each do |config|
     config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.het.ModuleFramework"
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
     config.build_settings['TARGETED_DEVICE_FAMILY'] = "1"
+    config.build_settings['MACH_O_TYPE'] = "staticlib"
 end
 
 target.add_dependency(moduleTarget)
