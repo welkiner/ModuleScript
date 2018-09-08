@@ -17,6 +17,17 @@
             ]
         },
         {
+            "name": "头文件",
+            "type": "Ruby",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}/create_module_header.rb",
+            "args": [
+                "/Users/tl/Desktop/TEST/HETPublicSDK_RequestCore",
+                "HETPublicSDK_RequestCore"
+            ]
+        },
+        {
             "name": "分析脚本",
             "type": "Ruby",
             "request": "launch",
