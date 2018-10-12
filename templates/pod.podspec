@@ -4,6 +4,7 @@ Pod::Spec.new do |s|
   s.version      = "1.0.0"
   s.summary      = "__ProjectName__."
   s.requires_arc = true
+  s.is_ipub      = true
   s.description  = <<-DESC
                     this is DESC
                    DESC

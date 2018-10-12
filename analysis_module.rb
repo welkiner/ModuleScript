@@ -4,6 +4,7 @@ require 'fileutils'
 require 'date'
 require 'json'
 require 'cocoapods-core'
+require 'cocoapods-ipub'
 $projPath =  ARGV[0]
 $CodeFolder = "ModuleCode"
 if (!File::directory?($projPath) ||
@@ -14,6 +15,7 @@ if (!File::directory?($projPath) ||
 end
 
 $fileLayers = 0
+$svnURL
 def svnUpgrade(path)
     Dir::chdir("#{path}")
     if !File::exist?(".svn")    
@@ -32,6 +34,19 @@ if (svnInfoArray.count < 5)
     puts "Error,unversioned module"
     return
 end
+svnInfoArray.each { |line|
+    if line[0,5] == "URL: "
+        $svnURL = "http://#{line.split("URL: ")[1].split("@")[1]}"
+        break
+    end
+}
+svnInfoArray = `svn info #{$svnURL}`.split("\n")
+if (svnInfoArray.count < 5)
+    puts "Error,unversioned module"
+    return
+end
+
+
 
 $author
 $svnRev
@@ -39,7 +54,7 @@ $svnDate
 $specName
 $svnLog
 $moduleVersion
-$svnURL
+
 $internalDependency=Hash.new
 $externalDependency=Hash.new
 Dir::chdir("#{$projPath}")
@@ -57,10 +72,10 @@ svnInfoArray.each { |line|
         $svnDate =  DateTime.parse(line.sub!("Last Changed Date: ", "").split(" (")[0])
         next
     end
-    if line[0,5] == "URL: "
-        $svnURL = "http://#{line.split("URL: ")[1].split("@")[1]}"
-        next
-    end
+#    if line[0,5] == "URL: "
+#        $svnURL = "http://#{line.split("URL: ")[1].split("@")[1]}"
+#        next
+#    end
 }
 Dir::entries($projPath).each{ |fileName|
     if fileName.include?".podspec"
@@ -72,7 +87,6 @@ Dir::chdir("#{$projPath}/#{$CodeFolder}")
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 $svnLog = `env LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 svn log -r #{$svnRev}`
-puts $svnLog
 $svnLog = $svnLog.split("line\n\n")[1].split("\n------")[0]
 
 
@@ -85,9 +99,15 @@ IO.foreach("#{$specName}.podspec"){ |line|
 }
 
 
-podfile = Pod::Podfile.from_file("#{$projPath}/Podfile")
-podfile.target_definitions["ModuleFramework"].dependencies.each{ |dependencie|
-    $internalDependency[dependencie.name] = dependencie.requirement.requirements[0][1]
+
+podfile = Pod::IPubPodfile.from_file("#{$projPath}/Podfile")
+podfile.target_definitions["#{$specName}"].ipub_dependencies.each{ |dependencie|
+    if dependencie.is_ipub
+        $internalDependency[dependencie.name] = dependencie.requirement.requirements[0][1]
+    else
+        $externalDependency[dependencie.name] = dependencie.requirement.requirements[0][1]
+    end
+    
 }
 
  

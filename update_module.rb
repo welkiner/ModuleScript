@@ -10,6 +10,8 @@ if ARGV[1] == "--delete"
     puts "success"
     return
 end
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
 json = File.read('moduleInfo.tmp')
 FileUtils.rm_rf("moduleInfo.tmp")
 obj = JSON.parse(json)
@@ -32,8 +34,8 @@ File.open("#{obj["specName"]}.podspec","r+") do |oldf|
         }
     end
 end
-Pod::Command.run(['repo-svn',"push","HETSpecs","temp/#{obj["specName"]}.podspec"])
+Pod::Command.run(['repo-svn',"push","HETModuleSpecs","temp/#{obj["specName"]}.podspec"])
 FileUtils.rm_rf("temp")
-Pod::Command.run(['repo-svn',"update","HETSpecs"])
+Pod::Command.run(['repo-svn',"update","HETModuleSpecs"])
 
 puts "success"

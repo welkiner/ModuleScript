@@ -4,20 +4,29 @@ require 'xcodeproj'
 require 'fileutils'
 
 $projPath =  ARGV[0]
-$moduleName = ARGV[1]
+$moduleName
 $target
 Dir::chdir("#{$projPath}")
 
 if (!File::directory?($projPath) ||
-    Dir["#{$projPath}/#{$moduleName}/ModuleFramework.h"].count != 1)
+    Dir["#{$projPath}/*.podspec"].count != 1)
+    puts "Error,invalid module"
+    return
+end
+$moduleName = File.basename(Dir["#{$projPath}/*.podspec"][0]).match(/(.*).podspec/)[1]
+
+if Dir["#{$projPath}/#{$moduleName}/#{$moduleName}.h"].count != 1
     puts "Error,invalid module"
     return
 end
 
+
+
+
 proj = Xcodeproj::Project.open("#{$moduleName}.xcodeproj")
 
 $target =proj.targets.detect{|e|
-    e.name == "ModuleFramework"
+    e.name == "#{$moduleName}"
 }
 
 files =  $target.headers_build_phase.files
@@ -27,9 +36,9 @@ files =  $target.headers_build_phase.files
 # }
 
 
-File.open("#{$projPath}/#{$moduleName}/ModuleFramework.h", "w+") do |aFile|
+File.open("#{$projPath}/#{$moduleName}/#{$moduleName}.h", "w+") do |aFile|
     aFile.syswrite("//
-//  ModuleFramework.h
+//  #{$moduleName}.h
 //
 //  Created by HET on 2018/5/31.
 //  Copyright © 2018年 HET. All rights reserved.
@@ -37,13 +46,13 @@ File.open("#{$projPath}/#{$moduleName}/ModuleFramework.h", "w+") do |aFile|
 
 #import <UIKit/UIKit.h>
         
-//! Project version number for ModuleFramework.
-FOUNDATION_EXPORT double ModuleFrameworkVersionNumber;
+//! Project version number for #{$moduleName}.
+FOUNDATION_EXPORT double #{$moduleName}VersionNumber;
 
-//! Project version string for ModuleFramework.
-FOUNDATION_EXPORT const unsigned char ModuleFrameworkVersionString[];
+//! Project version string for #{$moduleName}.
+FOUNDATION_EXPORT const unsigned char #{$moduleName}VersionString[];
         
-// In this header, you should import all the public headers of your framework using statements like #import <ModuleFramework/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <#{$moduleName}/PublicHeader.h>
 ")
     files.each {|file|
         aFile.syswrite("#import \"#{file.display_name}\"\n")
